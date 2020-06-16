@@ -33,12 +33,15 @@ def parse_mongo_entities(entities):
     global cache_dict
 
     for mongo_entity in entities:
+        if mongo_entity['_id'] in cache_dict:
+            continue
+
         parsed_entity = parse_mongo_entity(mongo_entity)
 
         if parsed_entity  is not None:
             ifc_entity = ifcopenshell.create_entity(parsed_entity['type'], **{k : v for k, v in parsed_entity.items() if k not in ['id', '_id', 'type']})        
-            cache_dict[parsed_entity['_id']] = ifc_entity
             ifc_file.add(ifc_entity)
+            cache_dict[parsed_entity['_id']] = ifc_entity
 
 def parse_mongo_entity(entity):
     global cache_dict
@@ -82,7 +85,6 @@ while processed <= doc_count:
     while len(refetch_entitiy_ids) != 0: 
         refetched_entities = col.find({"_id": {"$in": refetch_entitiy_ids}}, sort=[('_id', 1)])
         refetch_entitiy_ids = []
-
         parse_mongo_entities(refetched_entities)
         
     parse_mongo_entities(missing_ref_entities)
