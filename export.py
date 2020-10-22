@@ -39,7 +39,7 @@ def parse_mongo_entities(entities):
         parsed_entity = parse_mongo_entity(mongo_entity)
 
         if parsed_entity  is not None:
-            ifc_entity = ifcopenshell.create_entity(parsed_entity['type'], **{k : v for k, v in parsed_entity.items() if k not in ['id', '_id', 'type']})        
+            ifc_entity = ifcopenshell.create_entity(parsed_entity['type'], **{k : v for k, v in parsed_entity.items() if k not in ['id', '_id', 'type'] and v is not None})    
             ifc_file.add(ifc_entity)
             cache_dict[parsed_entity['_id']] = ifc_entity
 
